@@ -69,18 +69,18 @@
 
 Просмотр cgroups для контейнера: cat /sys/fs/cgroup/memory/docker/<container-id>/memory.limit_in_bytes
 
- 3. Union File Systems (Слои Образа)
+ 3. Union File Systems (Слои Образа) \
     Docker использует слоистую файловую систему (overlay2):
     -------------------------------
-    |  Read-Write Container Layer  | <-- Изменения пользователя
+###   |  Read-Write Container Layer  | <-- Изменения пользователя
     --------------------------------
-    |  Read-Only Image Layer 3     | <-- Приложение
+###   |  Read-Only Image Layer 3     | <-- Приложение
     --------------------------------
-    |  Read-Only Image Layer 2     | <-- Зависимости
+###   |  Read-Only Image Layer 2     | <-- Зависимости
     --------------------------------
-    |  Read-Only Image Layer 1     | <-- Базовая ОС
+###   |  Read-Only Image Layer 1     | <-- Базовая ОС
     --------------------------------
-    |  Base Image                  | <-- Образ
+###   |  Base Image                  | <-- Образ
     --------------------------------
 
 Преимущества слоев:
@@ -110,7 +110,7 @@ Docker Client(dcoker CLI) --> REST API --> Docker Daemon (Images (Образы):
 
 ## Структура docker-compose.yml
 '''
-version: '3.8' # Версия формата \
+version: '3.8' # Версия формата
 
 services:   # Список сервисов (контейнеров) \
     service_name:   # Имя сервиса (становится hostname) \

@@ -15,3 +15,7 @@ services:
       - "project=homelab"
       - "service=nginx"
 
+networks:
+  default:
+    driver: bridge
+    name: homelab-network
