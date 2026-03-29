@@ -3,7 +3,7 @@ services:
     image: nginx:alpine
     container_name: api-nginx
     ports:
-      - "8181:80"
+      - "9090:80"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
