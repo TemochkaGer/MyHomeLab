@@ -110,10 +110,10 @@ Docker Client(dcoker CLI) --> REST API --> Docker Daemon (Images (Образы):
 
 ## Структура docker-compose.yml
 '''
-version: '3.8' # Версия формата
+version: '3.8' # Версия формата \
 
-services:   # Список сервисов (контейнеров)
-    service_name:   # Имя сервиса (становится hostname)
+services:   # Список сервисов (контейнеров) \
+    service_name:   # Имя сервиса (становится hostname) \
         image:  # Образ для запуска
         build:  # Сборка из Dockerfile
         ports:  # Проброс портов
@@ -130,6 +130,7 @@ networks:   # Определение сетей
 
 volumes:    # Определение томов
     volume_name:
+'''
 
 # Сети в Docker
 Типы сетей:
