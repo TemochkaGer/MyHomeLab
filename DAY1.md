@@ -114,22 +114,22 @@ version: '3.8' # Версия формата \
 
 services:   # Список сервисов (контейнеров) \
     service_name:   # Имя сервиса (становится hostname) \
-        image:  # Образ для запуска
-        build:  # Сборка из Dockerfile
-        ports:  # Проброс портов
-        volumes:    # Монтирование томов
-        networks:   # Подключение к сетям
-        environment:    # Переменные окружения
-        depends_on: # Зависимости от других сервисов
-        restart:    # Политика перезапуска
-        healthcheck:    # Проверка здоровья
-
-networks:   # Определение сетей
-    network_name:
-        driver: bridge
-
-volumes:    # Определение томов
-    volume_name:
+        image:  # Образ для запуска \
+        build:  # Сборка из Dockerfile \
+        ports:  # Проброс портов \
+        volumes:    # Монтирование томов \
+        networks:   # Подключение к сетям \
+        environment:    # Переменные окружения \
+        depends_on: # Зависимости от других сервисов \
+        restart:    # Политика перезапуска \
+        healthcheck:    # Проверка здоровья \
+\
+networks:   # Определение сетей \
+    network_name: \
+        driver: bridge \
+\
+volumes:    # Определение томов \
+    volume_name: \
 '''
 
 # Сети в Docker
