@@ -88,4 +88,57 @@
  - Экономия места (общие слои не дублируются)
  - Быстрый деплой (скачиваются только измененные слои)
 
- 
+# Архитектура Docker
+Docker Client(dcoker CLI) --> REST API --> Docker Daemon (Images (Образы): Volumes (Тома), Containers (Контейнеры): Storage (хранилище), Networks (сети): Plugins (Плагины))
+## Ключевые компоненты
+- Компонент - Назначение - Расположение
+- Docker Client - CLI для взаимодействия - /usr/bin/docker
+- Docker Daemon - Фоновая служба управления - sytemd service
+- Docker Socket - Unix-сокет для API - /var/run/docker.sock
+- Images - Шаблоны для контейнеров - /var/lib/docker/image
+- Containers - Запущенные экземпляры - /var/lib/docker/containers
+- Volumes - Постоянное хранение данных - /var/lib/docker/volumes
+- Networks - сетевые конфигурации - /var/lib/docker/network
+
+# Docker Compose
+Что решает Docker Compose:
+ - Проблема без Compose - Решение с Compose
+ - Запускать каждый контейнер отдельно - Один файл - все сервисы
+ - Запоминать фдаги docker run - Декларированный YAML
+ - Порядок запуска не гарантирован - depends_on для зависимостей
+ - Переменные окружения в команде - environment в файле
+
+## Структура docker-compose.yml
+'''
+version: '3.8' # Версия формата
+
+services:   # Список сервисов (контейнеров)
+    service_name:   # Имя сервиса (становится hostname)
+        image:  # Образ для запуска
+        build:  # Сборка из Dockerfile
+        ports:  # Проброс портов
+        volumes:    # Монтирование томов
+        networks:   # Подключение к сетям
+        environment:    # Переменные окружения
+        depends_on: # Зависимости от других сервисов
+        restart:    # Политика перезапуска
+        healthcheck:    # Проверка здоровья
+
+networks:   # Определение сетей
+    network_name:
+        driver: bridge
+
+volumes:    # Определение томов
+    volume_name:
+
+# Сети в Docker
+Типы сетей:
+ - bridge - по умолчанию, контейнеры на одном хосте
+ - host - без изоляции, использует сеть хоста
+ - none - без сети
+ - overlay - контейнеры на разных хостах
+ - macvlan - прямой доступ к физической сети
+
+Как работает DNS в Docker: Docker NetWork: homelab-network, Subnet: 172.18.0.0/16 -> Container: api, IP: 172.18.0.2, Hostname: api / Container: nginx, IP: 172.18.0.3, Hostname: nginx -> Встроенный DNS сервер (127.0.0.11), Имя сервиса -> IP адрес
+
+## Важно: Контейнеры в одной сети видят друг друга по имени сервиса, а не по IP
