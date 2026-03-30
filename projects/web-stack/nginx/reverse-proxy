@@ -1,0 +1,72 @@
+# Секция events - настройки обработки соединений
+events {
+    # Моксимальное количество одновременных соединений
+    worker_connections 1024;
+
+    # Используем epoll (Linux) для производительности
+    use epol;
+
+    # Принятие множественных соединений
+    multi_accept on;
+}
+
+# Секция http - настройки веб-сервера
+http {
+    # Логирование (путь внутри контейнера)
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log warn;
+
+    # Таймауты (защита от медленных клиентов)
+    client_bidy_timeout 30s;
+    client_header_timeout 30s;
+    send_timeout 30s;
+
+    # Upsteam - группа бэкэнд-серверов
+    # Имя 'api_backend' используется в proxy_pass
+    upstream api_backend  {
+        # server имя_сервиса:порт (имя из docker-compose)
+        server api:5000
+
+        keepalive - постоянные соединения (производительность)
+        keepalive 32;
+    }
+
+    # Виртуальный сервер
+    server {
+        listen 80;
+        server_name localhost;
+
+        # Размер буфера для прокси
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
+
+        # Главный location - все запросы на API
+        location / {
+            # Проксирование на upstream
+            proxy_pass http://api_backend;
+
+            # Заголовки для бэкэнда
+            proxy_set_heandler Host $host;
+            proxy_set_heandler X-Real-IP $remote_addr;
+            proxy_set_heandler X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_heandler X-forwarded-Proto $scheme;
+
+            # Таймауты прокси
+            proxy_connect_time 30s;
+            proxy_send_timeout 30s;
+            proxy_read_timeout 30s;
+
+            # Keepalive к бэкэнду
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+        }
+
+        # Отдельный endpoint для проверки здоровья nginx
+        location /nginx-health {
+            retun 200 "nginx is healthy\n";
+            add_header Content-Type text/plain;
+            access_log off; # Не логировать healthcheck запросы
+        }
+    }
+}
