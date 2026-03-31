@@ -3,8 +3,12 @@ services:
     image: nginx:alpine
     container_name: api-nginx
     ports:
-      - "9090:80"
+      - "8282:80"
     restart: unless-stopped
+    networks:
+      - homelab-network
+    volumes:
+      - "./nginx/reverse-proxy:/etc/nginx/nginx.conf"
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
       interval: 30s
@@ -15,7 +19,22 @@ services:
       - "project=homelab"
       - "service=nginx"
 
+  python-api:
+    build: "./api"
+    container_name: python-api
+    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD", "wget", "-q", "--spider", "http://localhost:5000"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 10s
+    networks: 
+      - homelab-network
+    labels:
+      - "project=homelab"
+      - "service=python-api"
+
 networks:
-  default:
+  homelab-network:
     driver: bridge
-    name: homelab-network

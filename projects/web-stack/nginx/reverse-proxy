@@ -1,10 +1,11 @@
+# reverse-proxy
 # Секция events - настройки обработки соединений
 events {
     # Моксимальное количество одновременных соединений
     worker_connections 1024;
 
     # Используем epoll (Linux) для производительности
-    use epol;
+    use epoll;
 
     # Принятие множественных соединений
     multi_accept on;
@@ -17,7 +18,7 @@ http {
     error_log /var/log/nginx/error.log warn;
 
     # Таймауты (защита от медленных клиентов)
-    client_bidy_timeout 30s;
+    client_body_timeout 30s;
     client_header_timeout 30s;
     send_timeout 30s;
 
@@ -25,9 +26,9 @@ http {
     # Имя 'api_backend' используется в proxy_pass
     upstream api_backend  {
         # server имя_сервиса:порт (имя из docker-compose)
-        server api:5000
+        server python-api:5000;
 
-        keepalive - постоянные соединения (производительность)
+        # keepalive - постоянные соединения (производительность)
         keepalive 32;
     }
 
@@ -47,13 +48,13 @@ http {
             proxy_pass http://api_backend;
 
             # Заголовки для бэкэнда
-            proxy_set_heandler Host $host;
-            proxy_set_heandler X-Real-IP $remote_addr;
-            proxy_set_heandler X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_heandler X-forwarded-Proto $scheme;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-forwarded-Proto $scheme;
 
             # Таймауты прокси
-            proxy_connect_time 30s;
+            proxy_connect_timeout 30s;
             proxy_send_timeout 30s;
             proxy_read_timeout 30s;
 
@@ -64,7 +65,7 @@ http {
 
         # Отдельный endpoint для проверки здоровья nginx
         location /nginx-health {
-            retun 200 "nginx is healthy\n";
+            return 200 "nginx is healthy\n";
             add_header Content-Type text/plain;
             access_log off; # Не логировать healthcheck запросы
         }
