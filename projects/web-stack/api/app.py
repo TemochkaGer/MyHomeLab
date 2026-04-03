@@ -9,13 +9,15 @@ app = Flask(__name__)
 CONTAINER_NAME = os.getenv('CONTAINER_NAME', 'unknown')
 HOSTNAME = socket.gethostname()
 
+
 @app.route('/')
 def home():
     return jsonify({
-        'message': 'Welcome to HomeLab API',
+        'message': 'Привет!\nЭто API моего домашнего сервера homelab, здесь будут собираться все важные параметры системы и заметки, которые я буду делать.',
         'timestamp': datetime.now().isoformat(),
         'container': CONTAINER_NAME,
-        'hostname': HOSTNAME
+        'hostname': HOSTNAME,
+        'environ': os.environ
     })
 
 @app.route('/health')
