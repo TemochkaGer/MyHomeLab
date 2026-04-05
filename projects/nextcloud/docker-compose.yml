@@ -1,0 +1,48 @@
+
+services:
+  db:
+    image: mariadb:11
+    container_name: nextcloud_db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PS}
+      MYSQL_PASSWORD: ${DB_PS}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - nextcloud-net
+
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    restart: unless-stopped
+    ports:
+      - "1313:80"
+    environment:
+      MYSQL_PASSWORD: ${DB_PS}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_HOST: db
+      MYSQL_USER: nextcloud
+      NEXTCLOUD_TRUSTED_DOMAINS: ${DOMAIN:-localhost}
+    volumes:
+      - /mnt/wd_disk/nextcloud_data:/var/www/html/data
+      - nextcloud_config:/var/www/html/config
+      - nextcloud_apps:/var/www/html/custom_apps
+      - nextcloud_themes:/var/www/html/themes
+    depends_on:
+      - db
+    networks:
+      - nextcloud-net
+
+volumes:
+  db_data:
+  nextcloud_config:
+  nextcloud_apps:
+  nextcloud_themes:
+
+networks:
+  nextcloud-net:
+    driver: bridge
