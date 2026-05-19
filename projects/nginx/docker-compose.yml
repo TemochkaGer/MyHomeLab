@@ -1,0 +1,53 @@
+networks:
+  api-test:
+    driver: bridge
+
+services:
+  api-test-1:
+    image: api-1:v1
+    container_name: api-1
+    expose:
+      - "7111"
+    restart: unless-stopped
+    volumes:
+      - /mnt/homelab/projects/telgram_monitor_bot/grafs/:/app/grafs
+      - /mnt/homelab/projects/telgram_monitor_bot/SysInfo/:/app/SysInfo
+    user: apiuser
+    networks:
+      - api-test
+
+  api-test-2:
+    image: api-2:v1
+    container_name: api-2
+    expose:
+      - "7222"
+    restart: unless-stopped
+    volumes:
+      - /mnt/homelab/projects/telgram_monitor_bot/grafs/:/app/grafs
+      - /mnt/homelab/projects/telgram_monitor_bot/SysInfo/:/app/SysInfo
+    user: apiuser
+    networks:
+      - api-test
+
+  api-test-3:
+    image: api-3:v1
+    container_name: api-3
+    expose:
+      - "7333"
+    restart: unless-stopped
+    volumes:
+      - /mnt/homelab/projects/telgram_monitor_bot/grafs/:/app/grafs
+      - /mnt/homelab/projects/telgram_monitor_bot/SysInfo/:/app/SysInfo
+    user: apiuser
+    networks:
+      - api-test
+
+  api-nginx-test:
+    image: nginx:latest
+    container_name: api-nginx-test
+    ports:
+      - "7888:80"
+    volumes:
+      - "./api-nginx.conf:/etc/nginx/conf.d/default.conf:ro"
+    networks:
+      - api-test
