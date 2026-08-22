@@ -5,7 +5,7 @@
 # Для планировщика crontab
 # Запуск планировщика sudo crontab -e
 # 0 0 * * * /путь к скрипту/cleaner.sh
-# Путь для сохранения лога
+# Путь для сохранения лога /var/log/cleaner.sh
 
 set -uo pipefail
 
@@ -75,6 +75,18 @@ if (( USE_SPACE > 80 )); then # Сравниваем полученное зна
         echo "$(date '+%Y-%m-%d %H:%M:%S') Не удалось почистить Docker. Код ошибки: ${ERR_CODE}" | tee -a "${PATH_TO_LOG}"
         exit 1
     fi
+
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Начинаем чистку временных файлов"
+    systemd-tmpfiles --clean # Ручная чистка свременных файлов /tmp
+    ERR_CODE=$?
+
+    if [ $ERR_CODE -eq 0 ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Чистка временных файлов выполненна успешна" | tee -a "${PATH_TO_LOG}"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Не удалось почистить временные файлы. Код ошибки ${ERR_CODE}" | tee -a "${PATH_TO_LOG}"
+    fi
+
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Чистка сервера закончена"
 
     exit 0
 

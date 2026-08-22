@@ -1,22 +1,18 @@
-import os
-import matplotlib.pyplot as plt
 
-x = []
-y = []
 
-# with open("Tests_for_code.txt", "r") as f:
-#     data = f.read().splitlines()
+scatter_color = {
+    1 : {"ru" : "Красный", "en" : "red"},
+    2 : {"ru" : "Синий", "en" : "blue"},
+    3 : {"ru" : "Зеленый", "en" : "green"},
+    4 : {"ru" : "Оранжевый", "en" : "orange"}, 
+    5 : {"ru" : "Черный", "en" : "black"},
+    6 : {"ru" : "Желтый", "en" : "yellow"},
+}
+scatter_keys = list(scatter_color)
 
-# for i in data:
-#     point = i.split("\t")
-#     x.append(float(point[0].replace(",", ".")))
-#     y.append(float(point[1].replace(",", ".")))
+print(scatter_color.items("ru"))
 
-# plt.scatter(x, y)
-# plt.savefig("graf.png")
+for i, j in enumerate(scatter_keys, start = 1):
+    print(f"Индекс цвета: {i}, соответствующий ему цвет: {j}")
 
-list_dir = os.listdir(f"{os.path.dirname(os.path.abspath(__file__))}/data")
-print(list_dir)
-for i in list_dir:
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/data/{i}") as f:
-        print(f.read())
+

@@ -54,7 +54,6 @@ class CompositionCalculation:
             if ".txt" in i:
                 txt_data.append(i)
 
-
         return txt_data
     
     def take_data(self, txt_files):
@@ -81,13 +80,80 @@ class CompositionCalculation:
     
     def plot_graf(self, x, y):
         """
-        Функция отрисовывает граффик на основе полученных данных (x, y и названия графика - graf_name) и сохраняет их в папку ./graf в формате png
+        Функция, редактирует и отрисовывает граффик на основе полученных данных (x, y и названия графика - graf_name) и сохраняет их в папку ./graf в формате png
         """
 
+        x_min = input("Введите нижний порог значений по по оси X: ").strip()
+        if len(x_min) == 0:
+            x_min = min(x)
+        else:
+            x_min = float(x_min)
+
+        x_max = input("Введите верхний порог значений по по оси X: ").strip()
+        if len(x_max) == 0:
+            x_max = max(x)
+        else:
+            x_max = float(x_max)
+
+        new_x = []
+        new_y = []
+
+        for i, j in zip(x, y):
+            if i >= x_min and i <= x_max:
+                new_x.append(i)
+                new_y.append(j)
+
+        if not new_x or not new_y:
+            return
+        
         graf_name = input("Введите имя графика: ")
-        plt.scatter(x, y)
+        scatter_color = {
+            1 : {"ru" : "Красный", "en" : "red"},
+            2 : {"ru" : "Синий", "en" : "blue"},
+            3 : {"ru" : "Зеленый", "en" : "green"},
+            4 : {"ru" : "Оранжевый", "en" : "orange"}, 
+            5 : {"ru" : "Черный", "en" : "black"},
+            6 : {"ru" : "Желтый", "en" : "yellow"},
+        }
+        scatter_keys = list(scatter_color.keys())
+
+        for i, j in enumerate(scatter_keys, start = 1):
+            print(f"Индекс цвета: {i}, соответствующий ему цвет: {j}")
+        print("Нажмите Enter, чтобы использовать цвет по усолчанию")
+
+        while True:
+            index = input(f"Введите номер цвета для точек из списка: ")
+            if len(index) == 0:
+                index = 5
+                break
+            elif int(index) > 0 and int(index) <= len(scatter_color):
+                index = int(index)
+                break
+            else:
+                continue
+
+        plt.scatter(new_x, new_y,
+                    color = scatter_color[scatter_keys[index-1]]
+                    )
+        plt.xlabel(input("Введите подпись к оси X: "), fontsize=12)
+        plt.ylabel(input("Введите подпись к оси Y: "), fontsize=12)
+
+        if not os.path.exists(f"{WORK_DIR}/graf"):
+            self.make_dir(name_dir = "graf")
         plt.savefig(f"{WORK_DIR}/graf/{graf_name}.png")
-            
+        plt.close()
+        return
+    
+    def make_dir(self, name_dir):
+        try:
+            print(f"Директории с названием {name_dir} не было найдено, выполняется подготовка окружения!")
+            os.mkdir(f"{WORK_DIR}\{name_dir}")
+            print(f"Директрория {WORK_DIR}/{name_dir} создана успешно!")
+            return
+        except Exception as e:
+            print(f"Возникла ошибка при создании директории {WORK_DIR}/{name_dir}:\n{e}")
+            return
+
 if __name__ == "__main__":
     calc = CompositionCalculation()
     do = int(input(
